@@ -1,0 +1,123 @@
+# Enhanced MM-StoryAgent Configuration with Multilingual Support
+# This configuration demonstrates all the new features:
+# 1. Multilingual text processing
+# 2. Audio input support  
+# 3. Reference image integration
+
+story_dir: &story_dir generated_stories/multilingual_example
+
+# Example 1: Multilingual text input
+multilingual_text:
+    tool: multilingual_text_processor
+    cfg:
+        llm: qwen
+        chunk_size: 500
+        max_chunks: 10
+    params:
+        text: "एक बार की बात है, एक छोटे से गाँव में राजा नाम का एक बहुत बहादुर लड़का रहता था। वह हमेशा दूसरों की मदद करता था और सभी उसे बहुत प्यार करते थे।"
+        output_format: "story_topic"
+
+# Example 2: Audio input (alternative to multilingual text)
+# audio_input:
+#     tool: whisper_stt
+#     cfg:
+#         model_name: base
+#         device: cuda
+#         language: null  # Auto-detect
+#         translate_to_english: true
+#     params:
+#         audio_path: "path/to/audio/story.wav"
+#         output_format: "story_topic"
+
+# Story generation with character awareness
+story_writer:
+    tool: qa_outline_story_writer
+    cfg:
+        max_conv_turns: 3
+        num_outline: 4
+        temperature: 0.5
+        llm: qwen
+    params:
+        story_topic: "Friendship and Courage: A brave boy named Raja who helps others"
+        main_role: "(will be populated from multilingual text processing)"
+        scene: "(will be populated from multilingual text processing)"
+
+# Enhanced image generation with reference support
+image_generation:
+    tool: story_diffusion_t2i
+    cfg:
+        num_turns: 3
+        model_name: stabilityai/stable-diffusion-xl-base-1.0  # API endpoint model
+        height: &image_height 512
+        width: &image_width 1024
+        llm: qwen
+        reference_processor: reference_image_processor  # or simple_reference_processor
+    params:
+        seed: 112536
+        guidance_scale: 7.5  # Adjusted for API
+        style_name: "Storybook"
+        # Optional: Reference images for character consistency
+        # reference_images:
+        #     - image_path: "path/to/character1.jpg"
+        #       character_name: "Raja"
+        #     - image_path: "path/to/character2.jpg"
+        #       character_name: "Friend"
+
+# Sound generation (unchanged)
+sound_generation:
+    tool: audioldm2_t2a
+    cfg:
+        num_turns: 3
+        model_name: cvssp/audioldm2  # API endpoint model
+        sample_rate: &sample_rate 16000
+        llm: qwen
+    params:
+        guidance_scale: 3.5
+        seed: 0
+        ddim_steps: 100  # Reduced for API efficiency
+        n_candidate_per_text: 1  # Reduced for API efficiency
+
+# Speech generation (unchanged)
+speech_generation:
+    tool: cosyvoice_tts
+    cfg:
+        sample_rate: *sample_rate
+    params:
+        voice: longyuan
+
+# Music generation (unchanged)
+music_generation:
+    tool: musicgen_t2m
+    cfg:
+        llm: qwen
+        num_turns: 3
+        model_name: facebook/musicgen-medium  # API endpoint model
+        sample_rate: *sample_rate
+    params:
+        duration: 30.0
+
+# Video composition (unchanged)
+video_compose:
+    tool: slideshow_video_compose
+    cfg:
+        {}
+    params:
+        height: *image_height
+        width: *image_width
+        story_dir: *story_dir
+        fps: 8
+        audio_sample_rate: *sample_rate
+        audio_codec: mp3
+        caption:
+            font: resources/font/msyh.ttf
+            fontsize: 32
+            color: white
+            max_length: 50
+        slideshow_effect:
+            bg_speech_ratio: 0.6
+            sound_volume: 0.6
+            music_volume: 0.5
+            fade_duration: 0.8
+            slide_duration: 0.4
+            zoom_speed: 0.5
+            move_ratio: 0.9

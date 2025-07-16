@@ -1,0 +1,48 @@
+# Core dependencies
+numpy
+tqdm
+zhon
+Pillow
+PyYAML
+pypinyin
+soundfile
+librosa
+moviepy
+opencv-python
+
+# API clients and web requests
+requests
+huggingface_hub
+
+# Lightweight ML dependencies (keeping only essential ones)
+# Removed: torch, transformers, diffusers (heavy local model dependencies)
+# These are replaced with API calls
+
+# Speech-to-text (keeping Whisper as it's lightweight and useful)
+openai-whisper
+faster-whisper  # Optional: faster whisper implementation
+
+# Image processing (lightweight)
+# Removed: timm, sentence-transformers (heavy model dependencies)
+
+# Web interface
+streamlit
+fastapi
+uvicorn
+python-multipart  # For file uploads in FastAPI
+
+# Audio processing
+pydub  # Audio format conversion
+
+# Language processing
+langdetect  # Language detection
+googletrans  # Translation fallback
+
+# Aliyun SDK for CosyVoice (keeping as it's already API-based)
+git+https://github.com/aliyun/alibabacloud-nls-python-sdk@dev
+
+# API authentication and utilities
+python-dotenv  # For environment variable management
+
+# Optional: JSON handling for API responses
+orjson  # Fast JSON parsing (optional, fallback to standard json)
